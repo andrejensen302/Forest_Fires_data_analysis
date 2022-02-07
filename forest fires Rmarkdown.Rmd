@@ -3,26 +3,120 @@ title: "Foret Fires RMarkdown"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
+```{r}
+
+#Load libraries
+
+library(ggplot2)
+library(dplyr)
+library(GGally)
+library(caret)
+
 ```
 
-## R Markdown
+```{r}
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+#Load and name forestfires.tsv file
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+setwd("~/Documents/RStudio_Uploads/Forest_Fires_data_analysis")
+ff = read.delim('forestfires.tsv', header = TRUE, sep = '\t')
+forestfires <- ff
 
-```{r cars}
-summary(cars)
+
 ```
 
-## Including Plots
+```{r}
 
-You can also embed plots, for example:
+#skim ff file
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+head(ff)
+tail(ff)
+
+#Convert X and Y coordinates to factor variable
+
+ff$X = factor(ff$X)
+ff$Y = factor(ff$Y)
+
+#Create log_area for for a more even distribution of data for analysis
+ff$log_area = log10(ff$area + 1)
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r, echo=FALSE}
+
+#is winter factor. Hypothesis that the burn area will be the lowest since it is the coldest
+#time of the year in the Northern Hemisphere
+
+#create is_winter column
+ff$is_winter = ifelse(ff$month %in% c('dec', 'jan', 'feb'), 1, 0)
+head(ff)
+summary(ff)
+
+#convert is_winter column into a factor variable
+ff$is_winter = factor(ff$is_winter)
+is(ff$is_winter)
+
+```
+
+
+```{r, echo=FALSE}
+
+#plot temp, RH, wind, and burn_area comparing it against non-winter months
+
+plot_winter = select(ff, temp, RH, wind, log_area, is_winter) %>% filter(log_area > 0)
+
+ggpairs(plot_winter, mapping = aes(color = is_winter, alpha = 0.5))
+
+```
+
+```{r}
+
+
+#Split Data into test and train sets
+in_train = createDataPartition(y = ff$log_area, p = 0.80, list = FALSE)
+
+head(in_train)
+
+#Display all columns in both training and test sets
+ff_train = ff[in_train, ]
+ff_test = ff[-in_train, ]
+
+
+#Pre-processing steps, centering and scaling
+
+preprocessing_steps = preProcess(select(ff, FFMC,DMC, DC, ISI, temp, RH, wind, rain),
+                                 method = c('center', 'scale'))
+
+ff_train_processing = predict(preprocessing_steps, newdata = ff_train)
+head(ff_train_processing)
+
+ff_test_processing = predict(preprocessing_steps, newdata = ff_test)
+head(ff_test_processing)
+
+help(predict)
+
+#Near zero variances
+
+nearZeroVar(ff_train_processing, saveMetrics = TRUE)
+
+table(ff_train_processing$rain)
+
+#Update to pre-processing steps above to remove near zero variance variables
+
+preprocessing_steps = preProcess(select(ff, FFMC,DMC, DC, ISI, temp, RH, wind, rain),
+                                 method = c('center', 'scale', 'nzv'))
+
+ff_train_processing = predict(preprocessing_steps, newdata = ff_train)
+head(ff_train_processing)
+
+ff_test_processing = predict(preprocessing_steps, newdata = ff_test)
+head(ff_test_processing)
+
+nearZeroVar(ff_train_processing, saveMetrics = TRUE)
+
+preprocessing_steps
+
+#The rain variable was removed for near zero variance.
+```
+
