@@ -8,7 +8,7 @@ library(caret)
 
 #Load and name forestfires.tsv file
 
-setwd("~/Documents/UW Data Analytics")
+setwd("~/Documents/RStudio_Uploads/Forest_Fires_data_analysis")
 ff = forestfires
 ff = read.delim('forestfires.tsv', header = TRUE, sep = '\t')
 
@@ -77,7 +77,7 @@ table(ff_train_processing$rain)
 preprocessing_steps = preProcess(select(ff, FFMC,DMC, DC, ISI, temp, RH, wind, rain),
                                  method = c('center', 'scale', 'nzv'))
 
-ff_train_processing = predict(preprocessing_ dsteps, newdata = ff_train)
+ff_train_processing = predict(preprocessing_steps, newdata = ff_train)
 head(ff_train_processing)
 
 ff_test_processing = predict(preprocessing_steps, newdata = ff_test)
