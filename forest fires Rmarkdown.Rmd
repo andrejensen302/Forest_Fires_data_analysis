@@ -30,6 +30,8 @@ forestfires <- ff
 
 #skim ff file
 
+ff %>% glimpse()
+
 head(ff)
 tail(ff)
 
