@@ -45,7 +45,7 @@ Data Wrangling
 ff$is_winter = ifelse(ff$month %in% c('dec', 'jan', 'feb'), 1, 0)
 
 ```
-<img src ="https://github.com/andrejensen302/Forest_Fires_data_analysis/blob/7fa1a9d4e85c4e97d0924a56d36b2476272de54e/forest-fires-Rmarkdown_files/figure-gfm/unnamed-chunk-5-1.png">
+<img src ="https://github.com/andrejensen302/Forest_Fires_data_analysis/blob/7fa1a9d4e85c4e97d0924a56d36b2476272de54e/forest-fires-Rmarkdown_files/figure-gfm/unnamed-chunk-5-1.png" width="800" height="500">
 
 - Create a new column, is_weekend, to test another hypothesis that the burn area will be higher on weekends than it is on weekdays since more people will be nout camping and exploring the parks. If the answer is "1" then it will be listed as a weekend in the dataset. If it's "2" then it will be a weekday.
 
@@ -58,8 +58,9 @@ ff$is_weekend = factor(ff$is_weekend)
 is(ff$is_weekend)
 
 ```
+- Looking at the plot below, it's not conclusive (from the dataset) that having it be a weekend is a significant factor on whether there is an increased risk of a forest fire.
 
-
+<img src ="https://github.com/andrejensen302/Forest_Fires_data_analysis/blob/7033bf76526de5d0878dc8fccf6a0f1987f04594/misc_images/is_weekend_plot.png" width="800" height="500">
 
 Source: https://archive.ics.uci.edu/ml/datasets/forest+fires
 
