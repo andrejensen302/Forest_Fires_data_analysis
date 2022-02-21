@@ -43,8 +43,22 @@ Data Wrangling
 ```
 #create is_winter column
 ff$is_winter = ifelse(ff$month %in% c('dec', 'jan', 'feb'), 1, 0)
+
 ```
 <img src ="https://github.com/andrejensen302/Forest_Fires_data_analysis/blob/7fa1a9d4e85c4e97d0924a56d36b2476272de54e/forest-fires-Rmarkdown_files/figure-gfm/unnamed-chunk-5-1.png">
+
+- Create a new column, is_weekend, to test another hypothesis that the burn area will be higher on weekends than it is on weekdays since more people will be nout camping and exploring the parks. If the answer is "1" then it will be listed as a weekend in the dataset. If it's "2" then it will be a weekday.
+
+```
+
+#is weekend factor & convert it to a factor variable.
+ff$is_weekend = ifelse(ff$day %in% c('sat', 'sun'), 1, 0)
+head(ff)
+ff$is_weekend = factor(ff$is_weekend)
+is(ff$is_weekend)
+
+```
+
 
 
 Source: https://archive.ics.uci.edu/ml/datasets/forest+fires
