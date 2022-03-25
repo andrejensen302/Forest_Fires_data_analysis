@@ -1,9 +1,13 @@
 # Forest Fires Data Exploration and Analysis #
-Forest Fires Data Set (UCI repository)
+Forest Fires Data Set (UCI repository) - public dataset
 
 The purpose of this analysis is to use create a model to predict burn area. After some data wrangling and variable type conversions, the data was split into training and testing sets to create and test the model.
 
-Libraries used
+## First impressions and limitations of the dataset ##
+
+First, The data was collected during January, 2000 to December 2003. Data collected over a longer time horizon could have an impact on the findings as the overall climate/temperature of the area could change due to phenomena such as climate change. Another limitation is that the data does not include minute details such as the type of vegetation present or if there were firefighting efforts that could have affected the burn area. 
+
+### Library Selection ###
 
 ```
 #Load libraries
@@ -13,7 +17,7 @@ library(GGally)
 library(caret)
 ```
 
-Glimpse at the dataset
+### Glimpse at the dataset ###
 
 ```
 Rows: 517
@@ -35,7 +39,7 @@ $ log_area  <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 $ is_winter <fct> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
 ```
 
-Data Wrangling
+### Data Wrangling ###
 
 - Convert X and Y Coordinates into factor variable.
 - Create a new column, is_winter, to test our hypothesis that the burn area will be the lowest in the coldest months of the year since the dataset is for burn data in Europe.
@@ -44,8 +48,25 @@ Data Wrangling
 #create is_winter column
 ff$is_winter = ifelse(ff$month %in% c('dec', 'jan', 'feb'), 1, 0)
 
+#convert is_winter column into a factor variable
+ff$is_winter = factor(ff$is_winter)
+is(ff$is_winter)
+
 ```
 <img src ="https://github.com/andrejensen302/Forest_Fires_data_analysis/blob/7fa1a9d4e85c4e97d0924a56d36b2476272de54e/forest-fires-Rmarkdown_files/figure-gfm/unnamed-chunk-5-1.png" width="800" height="500">
+
+- From looking at our data it is not a strong correlation (.172) between an increase in burn area between the winter months compared to the other months of the year (.029). This could also be that there were only 31 occurances of datapoints occuring within the winter months compared to 486 datapoints where it did not.
+
+```
+summary(ff)
+
+Rows: 517
+
+is_winter
+0:486    
+1: 31  
+
+```
 
 - Create a new column, is_weekend, to test another hypothesis that the burn area will be higher on weekends than it is on weekdays since more people will be nout camping and exploring the parks. If the answer is "1" then it will be listed as a weekend in the dataset. If it's "2" then it will be a weekday.
 
